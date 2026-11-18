@@ -1,0 +1,480 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "mobile-app-release",
+  "title": "Mobile app release before a store deadline",
+  "description": "A major app update must ship before an app-store featuring deadline. Three weeks, a competitor on your heels and a store review you cannot control.",
+  "durationDays": 21,
+  "assumptions": [
+    "Team of eight: iOS, Android, backend, design and QA.",
+    "Store review usually takes one to three days, so the submission date is effectively day 18.",
+    "The featuring slot is lost if the update is not live by day 21.",
+    "Measures are health scores from 0 (critical) to 100 (excellent), not literal percentages.",
+    "Effects of decisions are simplified training models, not statistical forecasts.",
+    "Every measure slowly erodes each day as ordinary project pressure; good decisions offset it."
+  ],
+  "measures": [
+    {
+      "id": "schedule",
+      "label": "Schedule",
+      "unit": "pts",
+      "initial": 80,
+      "min": 0,
+      "max": 100,
+      "higherIsBetter": true,
+      "dailyDrift": -0.3
+    },
+    {
+      "id": "budget",
+      "label": "Budget",
+      "unit": "pts",
+      "initial": 80,
+      "min": 0,
+      "max": 100,
+      "higherIsBetter": true,
+      "dailyDrift": -0.2
+    },
+    {
+      "id": "quality",
+      "label": "Quality",
+      "unit": "pts",
+      "initial": 70,
+      "min": 0,
+      "max": 100,
+      "higherIsBetter": true,
+      "dailyDrift": 0
+    },
+    {
+      "id": "morale",
+      "label": "Team morale",
+      "unit": "pts",
+      "initial": 75,
+      "min": 0,
+      "max": 100,
+      "higherIsBetter": true,
+      "dailyDrift": -0.15
+    }
+  ],
+  "milestones": [
+    {
+      "id": "feature-complete",
+      "label": "Feature complete",
+      "day": 8
+    },
+    {
+      "id": "qa-complete",
+      "label": "QA complete",
+      "day": 15
+    },
+    {
+      "id": "submission",
+      "label": "Store submission",
+      "day": 18
+    },
+    {
+      "id": "release",
+      "label": "Release",
+      "day": 21
+    }
+  ],
+  "events": [
+    {
+      "id": "competitor",
+      "day": 3,
+      "title": "Competitor ships a similar feature",
+      "description": "A rival app announces a feature very close to your headline feature.",
+      "effects": [
+        {
+          "measure": "morale",
+          "delta": -3
+        }
+      ],
+      "decisionId": "competitor-decision"
+    },
+    {
+      "id": "android-bugs",
+      "day": 7,
+      "title": "Android device fragmentation bugs",
+      "description": "Crashes appear on a long tail of older Android devices.",
+      "effects": [
+        {
+          "measure": "quality",
+          "delta": -5
+        },
+        {
+          "measure": "schedule",
+          "delta": -2
+        }
+      ],
+      "bottleneck": "Android device bugs",
+      "decisionId": "android-decision"
+    },
+    {
+      "id": "assets-late",
+      "day": 11,
+      "title": "Design assets are late",
+      "description": "The designer is away and final store and in-app assets are not ready.",
+      "effects": [
+        {
+          "measure": "schedule",
+          "delta": -3
+        }
+      ],
+      "decisionId": "assets-decision"
+    },
+    {
+      "id": "cold-crash",
+      "day": 14,
+      "title": "QA finds a crash on cold start",
+      "description": "QA reproduces a crash on first launch after install.",
+      "effects": [
+        {
+          "measure": "quality",
+          "delta": -7
+        }
+      ],
+      "bottleneck": "Cold start crash",
+      "decisionId": "crash-decision"
+    },
+    {
+      "id": "beta-love",
+      "day": 17,
+      "title": "Beta testers are enthusiastic",
+      "description": "Early beta feedback is strongly positive.",
+      "effects": [
+        {
+          "measure": "morale",
+          "delta": 4
+        },
+        {
+          "measure": "quality",
+          "delta": 2
+        }
+      ]
+    },
+    {
+      "id": "store-warning",
+      "day": 19,
+      "title": "Store flags a policy issue",
+      "description": "The store review team flags a policy concern with one feature.",
+      "effects": [
+        {
+          "measure": "schedule",
+          "delta": -4
+        }
+      ],
+      "bottleneck": "Store policy issue",
+      "decisionId": "store-decision"
+    }
+  ],
+  "decisions": [
+    {
+      "id": "competitor-decision",
+      "prompt": "A competitor shipped something similar. How do you respond?",
+      "options": [
+        {
+          "id": "pivot",
+          "label": "Pivot to match their feature",
+          "tradeoff": "Matches the market, but throws away planned work.",
+          "effects": [
+            {
+              "measure": "schedule",
+              "delta": -7
+            },
+            {
+              "measure": "budget",
+              "delta": -3
+            },
+            {
+              "measure": "morale",
+              "delta": -2
+            }
+          ]
+        },
+        {
+          "id": "hold-course",
+          "label": "Hold course",
+          "tradeoff": "Calm and focused, but you carry the risk of looking late.",
+          "effects": [
+            {
+              "measure": "morale",
+              "delta": 2
+            },
+            {
+              "measure": "quality",
+              "delta": 1
+            }
+          ]
+        },
+        {
+          "id": "differentiate",
+          "label": "Add a small differentiator",
+          "tradeoff": "Some extra work for a clearer story.",
+          "effects": [
+            {
+              "measure": "schedule",
+              "delta": -3
+            },
+            {
+              "measure": "morale",
+              "delta": 3
+            },
+            {
+              "measure": "quality",
+              "delta": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "android-decision",
+      "prompt": "Crashes appear on many older Android devices. What do you do?",
+      "options": [
+        {
+          "id": "device-lab",
+          "label": "Rent a device lab",
+          "tradeoff": "Finds and fixes problems quickly, for a fee.",
+          "effects": [
+            {
+              "measure": "budget",
+              "delta": -6
+            },
+            {
+              "measure": "quality",
+              "delta": 6
+            },
+            {
+              "measure": "schedule",
+              "delta": 1
+            }
+          ],
+          "resolves": [
+            "android-bugs"
+          ]
+        },
+        {
+          "id": "drop-old",
+          "label": "Drop support for the oldest devices",
+          "tradeoff": "Fewer bugs, but some users are left behind.",
+          "effects": [
+            {
+              "measure": "quality",
+              "delta": 3
+            },
+            {
+              "measure": "schedule",
+              "delta": 2
+            },
+            {
+              "measure": "morale",
+              "delta": -1
+            }
+          ],
+          "resolves": [
+            "android-bugs"
+          ]
+        },
+        {
+          "id": "crowd-test",
+          "label": "Crowd-test with beta users",
+          "tradeoff": "Cheap, but slower and less certain.",
+          "effects": [
+            {
+              "measure": "quality",
+              "delta": 4
+            },
+            {
+              "measure": "schedule",
+              "delta": -2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "assets-decision",
+      "prompt": "Final design assets are late. What do you do?",
+      "options": [
+        {
+          "id": "stock-assets",
+          "label": "Use stock assets for now",
+          "tradeoff": "Unblocks the build, but looks generic.",
+          "effects": [
+            {
+              "measure": "schedule",
+              "delta": 3
+            },
+            {
+              "measure": "quality",
+              "delta": -2
+            }
+          ]
+        },
+        {
+          "id": "wait-designer",
+          "label": "Wait for the designer",
+          "tradeoff": "Best look, but costs days.",
+          "effects": [
+            {
+              "measure": "schedule",
+              "delta": -4
+            },
+            {
+              "measure": "quality",
+              "delta": 2
+            }
+          ]
+        },
+        {
+          "id": "devs-improvise",
+          "label": "Let developers improvise",
+          "tradeoff": "Fast, but design quality suffers and developers grumble.",
+          "effects": [
+            {
+              "measure": "schedule",
+              "delta": 2
+            },
+            {
+              "measure": "quality",
+              "delta": -5
+            },
+            {
+              "measure": "morale",
+              "delta": -1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "crash-decision",
+      "prompt": "QA found a crash on cold start. How do you respond?",
+      "options": [
+        {
+          "id": "hotfix-sprint",
+          "label": "Run a dedicated hotfix sprint",
+          "tradeoff": "Fixes the root cause, but pulls everyone off other work.",
+          "effects": [
+            {
+              "measure": "schedule",
+              "delta": -4
+            },
+            {
+              "measure": "quality",
+              "delta": 9
+            },
+            {
+              "measure": "morale",
+              "delta": -2
+            }
+          ],
+          "resolves": [
+            "cold-crash"
+          ]
+        },
+        {
+          "id": "feature-flag",
+          "label": "Ship behind a feature flag",
+          "tradeoff": "Keeps moving, but the crash remains for some users.",
+          "effects": [
+            {
+              "measure": "schedule",
+              "delta": -1
+            },
+            {
+              "measure": "quality",
+              "delta": 4
+            }
+          ]
+        },
+        {
+          "id": "delay-release",
+          "label": "Delay the release by two days",
+          "tradeoff": "Safe, but you may miss the featuring slot.",
+          "effects": [
+            {
+              "measure": "schedule",
+              "delta": -8
+            },
+            {
+              "measure": "quality",
+              "delta": 8
+            },
+            {
+              "measure": "budget",
+              "delta": -2
+            },
+            {
+              "measure": "morale",
+              "delta": 1
+            }
+          ],
+          "resolves": [
+            "cold-crash"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "store-decision",
+      "prompt": "The store flagged a policy issue. What do you do?",
+      "options": [
+        {
+          "id": "fix-resubmit",
+          "label": "Fix the issue and resubmit",
+          "tradeoff": "Clean outcome, but it eats into the review window.",
+          "effects": [
+            {
+              "measure": "schedule",
+              "delta": -5
+            },
+            {
+              "measure": "quality",
+              "delta": 3
+            }
+          ],
+          "resolves": [
+            "store-warning"
+          ]
+        },
+        {
+          "id": "appeal",
+          "label": "Appeal the decision",
+          "tradeoff": "Might save time, but the team is on edge while waiting.",
+          "effects": [
+            {
+              "measure": "schedule",
+              "delta": -2
+            },
+            {
+              "measure": "morale",
+              "delta": -2
+            }
+          ]
+        },
+        {
+          "id": "remove-feature",
+          "label": "Remove the flagged feature",
+          "tradeoff": "Gets through review, at the cost of the feature.",
+          "effects": [
+            {
+              "measure": "schedule",
+              "delta": -1
+            },
+            {
+              "measure": "quality",
+              "delta": -3
+            },
+            {
+              "measure": "morale",
+              "delta": -3
+            }
+          ],
+          "resolves": [
+            "store-warning"
+          ]
+        }
+      ]
+    }
+  ]
+}

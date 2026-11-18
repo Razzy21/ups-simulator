@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ups.example/schema/scenario/1.0.0",
+  "title": "UPS Scenario",
+  "description": "Data contract for a Universal Project Simulator scenario. Pure data: no code, no expressions.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "id", "title", "description", "durationDays", "assumptions", "measures", "milestones", "events", "decisions"],
+  "properties": {
+    "schemaVersion": { "const": "1.0.0" },
+    "id": { "$ref": "#/$defs/slug" },
+    "title": { "$ref": "#/$defs/shortText" },
+    "description": { "$ref": "#/$defs/longText" },
+    "durationDays": { "type": "integer", "minimum": 1, "maximum": 365 },
+    "assumptions": { "type": "array", "minItems": 1, "maxItems": 20, "items": { "$ref": "#/$defs/longText" } },
+    "measures": { "type": "array", "minItems": 4, "maxItems": 4, "items": { "$ref": "#/$defs/measure" } },
+    "milestones": { "type": "array", "minItems": 1, "maxItems": 20, "items": { "$ref": "#/$defs/milestone" } },
+    "events": { "type": "array", "minItems": 1, "maxItems": 200, "items": { "$ref": "#/$defs/event" } },
+    "decisions": { "type": "array", "minItems": 1, "maxItems": 100, "items": { "$ref": "#/$defs/decision" } }
+  },
+  "$defs": {
+    "slug": { "type": "string", "pattern": "^[a-z][a-z0-9-]{0,47}$" },
+    "shortText": { "type": "string", "minLength": 1, "maxLength": 120 },
+    "longText": { "type": "string", "minLength": 1, "maxLength": 600 },
+    "effect": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["measure", "delta"],
+      "properties": {
+        "measure": { "$ref": "#/$defs/slug" },
+        "delta": { "type": "number", "minimum": -100, "maximum": 100 }
+      }
+    },
+    "effects": { "type": "array", "maxItems": 8, "items": { "$ref": "#/$defs/effect" } },
+    "measure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "label", "initial", "min", "max"],
+      "properties": {
+        "id": { "$ref": "#/$defs/slug" },
+        "label": { "$ref": "#/$defs/shortText" },
+        "unit": { "type": "string", "maxLength": 12 },
+        "initial": { "type": "number" },
+        "min": { "type": "number" },
+        "max": { "type": "number" },
+        "higherIsBetter": { "type": "boolean" },
+        "dailyDrift": { "type": "number", "minimum": -100, "maximum": 100 }
+      }
+    },
+    "milestone": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "label", "day"],
+      "properties": {
+        "id": { "$ref": "#/$defs/slug" },
+        "label": { "$ref": "#/$defs/shortText" },
+        "day": { "type": "integer", "minimum": 1, "maximum": 365 }
+      }
+    },
+    "event": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "day", "title", "description"],
+      "properties": {
+        "id": { "$ref": "#/$defs/slug" },
+        "day": { "type": "integer", "minimum": 1, "maximum": 365 },
+        "title": { "$ref": "#/$defs/shortText" },
+        "description": { "$ref": "#/$defs/longText" },
+        "effects": { "$ref": "#/$defs/effects" },
+        "bottleneck": { "$ref": "#/$defs/shortText" },
+        "decisionId": { "$ref": "#/$defs/slug" }
+      }
+    },
+    "decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "prompt", "options"],
+      "properties": {
+        "id": { "$ref": "#/$defs/slug" },
+        "prompt": { "$ref": "#/$defs/longText" },
+        "options": { "type": "array", "minItems": 2, "maxItems": 5, "items": { "$ref": "#/$defs/option" } }
+      }
+    },
+    "option": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "label", "tradeoff", "effects"],
+      "properties": {
+        "id": { "$ref": "#/$defs/slug" },
+        "label": { "$ref": "#/$defs/shortText" },
+        "tradeoff": { "$ref": "#/$defs/longText" },
+        "effects": { "type": "array", "minItems": 1, "maxItems": 8, "items": { "$ref": "#/$defs/effect" } },
+        "resolves": { "type": "array", "maxItems": 10, "items": { "$ref": "#/$defs/slug" } }
+      }
+    }
+  }
+}

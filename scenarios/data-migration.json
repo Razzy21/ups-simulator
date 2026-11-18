@@ -1,0 +1,476 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "data-migration",
+  "title": "Customer data migration to a new platform",
+  "description": "Your team is moving a legacy customer database to a new cloud platform before the old data-centre contract ends. Cutover weekend cannot move.",
+  "durationDays": 24,
+  "assumptions": [
+    "Team of five: three engineers, one database administrator and one analyst, plus a vendor support contract.",
+    "Cutover weekend (day 24) is fixed because the old data-centre contract ends then.",
+    "The migration tool is supplied by the new platform vendor and cannot be modified.",
+    "Measures are health scores from 0 (critical) to 100 (excellent), not literal percentages.",
+    "Effects of decisions are simplified training models, not statistical forecasts.",
+    "Every measure slowly erodes each day as ordinary project pressure; good decisions offset it."
+  ],
+  "measures": [
+    {
+      "id": "schedule",
+      "label": "Schedule",
+      "unit": "pts",
+      "initial": 80,
+      "min": 0,
+      "max": 100,
+      "higherIsBetter": true,
+      "dailyDrift": -0.3
+    },
+    {
+      "id": "budget",
+      "label": "Budget",
+      "unit": "pts",
+      "initial": 80,
+      "min": 0,
+      "max": 100,
+      "higherIsBetter": true,
+      "dailyDrift": -0.2
+    },
+    {
+      "id": "quality",
+      "label": "Quality",
+      "unit": "pts",
+      "initial": 70,
+      "min": 0,
+      "max": 100,
+      "higherIsBetter": true,
+      "dailyDrift": 0
+    },
+    {
+      "id": "morale",
+      "label": "Team morale",
+      "unit": "pts",
+      "initial": 75,
+      "min": 0,
+      "max": 100,
+      "higherIsBetter": true,
+      "dailyDrift": -0.15
+    }
+  ],
+  "milestones": [
+    {
+      "id": "mapping-done",
+      "label": "Schema mapping done",
+      "day": 6
+    },
+    {
+      "id": "dry-run",
+      "label": "Full dry run",
+      "day": 14
+    },
+    {
+      "id": "rehearsal",
+      "label": "Cutover rehearsal",
+      "day": 20
+    },
+    {
+      "id": "cutover",
+      "label": "Cutover",
+      "day": 24
+    }
+  ],
+  "events": [
+    {
+      "id": "unknown-tables",
+      "day": 2,
+      "title": "Undocumented tables discovered",
+      "description": "Engineers find dozens of tables that appear in no documentation.",
+      "effects": [
+        {
+          "measure": "schedule",
+          "delta": -3
+        },
+        {
+          "measure": "quality",
+          "delta": -2
+        }
+      ],
+      "bottleneck": "Unknown data sources",
+      "decisionId": "discovery-decision"
+    },
+    {
+      "id": "slow-loads",
+      "day": 6,
+      "title": "Vendor tool throttles bulk loads",
+      "description": "The migration tool loads data far slower than the vendor promised.",
+      "effects": [
+        {
+          "measure": "schedule",
+          "delta": -4
+        }
+      ],
+      "bottleneck": "Slow load speed",
+      "decisionId": "throughput-decision"
+    },
+    {
+      "id": "duplicates",
+      "day": 10,
+      "title": "Audit finds duplicate customers",
+      "description": "A data quality audit finds thousands of duplicate customer records.",
+      "effects": [
+        {
+          "measure": "quality",
+          "delta": -6
+        }
+      ],
+      "decisionId": "dedupe-decision"
+    },
+    {
+      "id": "dry-run-ok",
+      "day": 14,
+      "title": "Dry run passes with warnings",
+      "description": "The full dry run completes, with a short list of warnings to review.",
+      "effects": [
+        {
+          "measure": "morale",
+          "delta": 4
+        },
+        {
+          "measure": "quality",
+          "delta": 2
+        }
+      ]
+    },
+    {
+      "id": "dba-offer",
+      "day": 17,
+      "title": "Your DBA has a job offer",
+      "description": "The only database administrator tells you they are considering another job.",
+      "effects": [
+        {
+          "measure": "morale",
+          "delta": -6
+        }
+      ],
+      "bottleneck": "Single point of failure: DBA",
+      "decisionId": "retention-decision"
+    },
+    {
+      "id": "no-rollback",
+      "day": 21,
+      "title": "Rehearsal exposes a rollback gap",
+      "description": "The cutover rehearsal shows there is no tested way to roll back if cutover fails.",
+      "effects": [
+        {
+          "measure": "schedule",
+          "delta": -3
+        },
+        {
+          "measure": "quality",
+          "delta": -3
+        }
+      ],
+      "decisionId": "rollback-decision"
+    }
+  ],
+  "decisions": [
+    {
+      "id": "discovery-decision",
+      "prompt": "Dozens of undocumented tables turned up. How do you handle them?",
+      "options": [
+        {
+          "id": "pause-and-map",
+          "label": "Pause and document every table",
+          "tradeoff": "Thorough and safe, but it uses up days you do not have.",
+          "effects": [
+            {
+              "measure": "schedule",
+              "delta": -6
+            },
+            {
+              "measure": "quality",
+              "delta": 6
+            }
+          ],
+          "resolves": [
+            "unknown-tables"
+          ]
+        },
+        {
+          "id": "sample-and-go",
+          "label": "Sample the tables and keep moving",
+          "tradeoff": "Keeps momentum, but unknown data may bite later.",
+          "effects": [
+            {
+              "measure": "schedule",
+              "delta": -1
+            },
+            {
+              "measure": "quality",
+              "delta": -3
+            }
+          ]
+        },
+        {
+          "id": "vendor-workshop",
+          "label": "Pay the vendor for a discovery workshop",
+          "tradeoff": "Expert help quickly, at a price.",
+          "effects": [
+            {
+              "measure": "budget",
+              "delta": -7
+            },
+            {
+              "measure": "schedule",
+              "delta": -2
+            },
+            {
+              "measure": "quality",
+              "delta": 4
+            }
+          ],
+          "resolves": [
+            "unknown-tables"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "throughput-decision",
+      "prompt": "Bulk loads are too slow to finish in time. What do you do?",
+      "options": [
+        {
+          "id": "parallel-loads",
+          "label": "Run loads in parallel",
+          "tradeoff": "Faster, but more moving parts and more chances for errors.",
+          "effects": [
+            {
+              "measure": "schedule",
+              "delta": 4
+            },
+            {
+              "measure": "quality",
+              "delta": -3
+            },
+            {
+              "measure": "morale",
+              "delta": -1
+            }
+          ],
+          "resolves": [
+            "slow-loads"
+          ]
+        },
+        {
+          "id": "buy-capacity",
+          "label": "Buy extra throughput capacity",
+          "tradeoff": "The simplest fix, paid for in budget.",
+          "effects": [
+            {
+              "measure": "schedule",
+              "delta": 5
+            },
+            {
+              "measure": "budget",
+              "delta": -8
+            }
+          ],
+          "resolves": [
+            "slow-loads"
+          ]
+        },
+        {
+          "id": "overnight",
+          "label": "Run big batches overnight",
+          "tradeoff": "Uses idle time, but means night work for the team.",
+          "effects": [
+            {
+              "measure": "schedule",
+              "delta": 2
+            },
+            {
+              "measure": "morale",
+              "delta": -4
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "dedupe-decision",
+      "prompt": "Thousands of duplicate customers were found. How do you deal with them?",
+      "options": [
+        {
+          "id": "clean-first",
+          "label": "Clean the data before migrating",
+          "tradeoff": "Best result, but a slow manual effort.",
+          "effects": [
+            {
+              "measure": "schedule",
+              "delta": -5
+            },
+            {
+              "measure": "quality",
+              "delta": 9
+            },
+            {
+              "measure": "morale",
+              "delta": -1
+            }
+          ]
+        },
+        {
+          "id": "migrate-and-flag",
+          "label": "Migrate as-is and flag duplicates",
+          "tradeoff": "Quick, but the new platform inherits the mess.",
+          "effects": [
+            {
+              "measure": "quality",
+              "delta": 3
+            },
+            {
+              "measure": "schedule",
+              "delta": -1
+            }
+          ]
+        },
+        {
+          "id": "automate",
+          "label": "Write an automated dedupe script",
+          "tradeoff": "A good middle path, if the script is right.",
+          "effects": [
+            {
+              "measure": "schedule",
+              "delta": -2
+            },
+            {
+              "measure": "quality",
+              "delta": 6
+            },
+            {
+              "measure": "budget",
+              "delta": -2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "retention-decision",
+      "prompt": "Your only DBA is thinking of leaving. What do you do?",
+      "options": [
+        {
+          "id": "counter-offer",
+          "label": "Support a retention offer",
+          "tradeoff": "Likely keeps them through cutover, but it is costly.",
+          "effects": [
+            {
+              "measure": "budget",
+              "delta": -6
+            },
+            {
+              "measure": "morale",
+              "delta": 4
+            }
+          ],
+          "resolves": [
+            "dba-offer"
+          ]
+        },
+        {
+          "id": "knowledge-transfer",
+          "label": "Start knowledge transfer now",
+          "tradeoff": "Reduces dependence on one person, but takes time from everyone.",
+          "effects": [
+            {
+              "measure": "schedule",
+              "delta": -3
+            },
+            {
+              "measure": "quality",
+              "delta": 2
+            },
+            {
+              "measure": "morale",
+              "delta": -2
+            }
+          ],
+          "resolves": [
+            "dba-offer"
+          ]
+        },
+        {
+          "id": "assume-fine",
+          "label": "Assume it will be fine",
+          "tradeoff": "Costs nothing today, and may cost a lot later.",
+          "effects": [
+            {
+              "measure": "morale",
+              "delta": -4
+            },
+            {
+              "measure": "quality",
+              "delta": -2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "rollback-decision",
+      "prompt": "There is no tested rollback plan. What do you do with three days left?",
+      "options": [
+        {
+          "id": "build-rollback",
+          "label": "Build and test a rollback",
+          "tradeoff": "Safe, but it uses a lot of the remaining time.",
+          "effects": [
+            {
+              "measure": "schedule",
+              "delta": -5
+            },
+            {
+              "measure": "quality",
+              "delta": 7
+            }
+          ]
+        },
+        {
+          "id": "accept-risk",
+          "label": "Accept the risk and keep the date",
+          "tradeoff": "Keeps the schedule intact but cutover becomes a gamble.",
+          "effects": [
+            {
+              "measure": "schedule",
+              "delta": 1
+            },
+            {
+              "measure": "quality",
+              "delta": -6
+            },
+            {
+              "measure": "morale",
+              "delta": -2
+            }
+          ]
+        },
+        {
+          "id": "extend-window",
+          "label": "Negotiate a longer cutover window",
+          "tradeoff": "A middle path that costs some money and goodwill.",
+          "effects": [
+            {
+              "measure": "budget",
+              "delta": -5
+            },
+            {
+              "measure": "quality",
+              "delta": 4
+            },
+            {
+              "measure": "schedule",
+              "delta": -1
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

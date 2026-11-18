@@ -1,0 +1,509 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "website-redesign",
+  "title": "Website redesign on a fixed launch date",
+  "description": "Your team is rebuilding the company marketing website for a launch date fixed by an advertising campaign. Keep schedule, budget, quality and morale healthy through four weeks of surprises.",
+  "durationDays": 28,
+  "assumptions": [
+    "Team of six: two designers, three developers and one content lead, full-time on this project.",
+    "The launch date is fixed by a marketing campaign; scope is flexible, the date is not.",
+    "Measures are health scores from 0 (critical) to 100 (excellent), not literal percentages.",
+    "Effects of decisions are simplified training models, not statistical forecasts.",
+    "Every measure slowly erodes each day as ordinary project pressure; good decisions offset it."
+  ],
+  "measures": [
+    {
+      "id": "schedule",
+      "label": "Schedule",
+      "unit": "pts",
+      "initial": 80,
+      "min": 0,
+      "max": 100,
+      "higherIsBetter": true,
+      "dailyDrift": -0.3
+    },
+    {
+      "id": "budget",
+      "label": "Budget",
+      "unit": "pts",
+      "initial": 80,
+      "min": 0,
+      "max": 100,
+      "higherIsBetter": true,
+      "dailyDrift": -0.2
+    },
+    {
+      "id": "quality",
+      "label": "Quality",
+      "unit": "pts",
+      "initial": 70,
+      "min": 0,
+      "max": 100,
+      "higherIsBetter": true,
+      "dailyDrift": 0
+    },
+    {
+      "id": "morale",
+      "label": "Team morale",
+      "unit": "pts",
+      "initial": 75,
+      "min": 0,
+      "max": 100,
+      "higherIsBetter": true,
+      "dailyDrift": -0.15
+    }
+  ],
+  "milestones": [
+    {
+      "id": "design-signoff",
+      "label": "Design sign-off",
+      "day": 7
+    },
+    {
+      "id": "content-freeze",
+      "label": "Content freeze",
+      "day": 14
+    },
+    {
+      "id": "beta",
+      "label": "Beta release",
+      "day": 21
+    },
+    {
+      "id": "launch",
+      "label": "Launch",
+      "day": 28
+    }
+  ],
+  "events": [
+    {
+      "id": "scope-request",
+      "day": 3,
+      "title": "Stakeholder wants five extra pages",
+      "description": "Marketing has just asked for five extra landing pages 'while you're at it'.",
+      "effects": [
+        {
+          "measure": "schedule",
+          "delta": -3
+        }
+      ],
+      "bottleneck": "Scope growth",
+      "decisionId": "scope-decision"
+    },
+    {
+      "id": "dev-out",
+      "day": 8,
+      "title": "Lead developer out sick for a week",
+      "description": "Your lead developer is unwell and will be out for the next week.",
+      "effects": [
+        {
+          "measure": "schedule",
+          "delta": -4
+        },
+        {
+          "measure": "morale",
+          "delta": -3
+        }
+      ],
+      "bottleneck": "Developer capacity",
+      "decisionId": "capacity-decision"
+    },
+    {
+      "id": "content-late",
+      "day": 12,
+      "title": "Client content arrives a week late",
+      "description": "The copy and images promised for content freeze have not arrived.",
+      "effects": [
+        {
+          "measure": "schedule",
+          "delta": -3
+        }
+      ],
+      "bottleneck": "Late client content",
+      "decisionId": "content-decision"
+    },
+    {
+      "id": "checkout-bug",
+      "day": 16,
+      "title": "Critical browser bug found",
+      "description": "Testing shows the checkout form breaks on a popular browser, five days before beta.",
+      "effects": [
+        {
+          "measure": "quality",
+          "delta": -6
+        }
+      ],
+      "bottleneck": "Open critical bug",
+      "decisionId": "bug-decision"
+    },
+    {
+      "id": "good-feedback",
+      "day": 19,
+      "title": "Stakeholders love the early build",
+      "description": "A preview demo gets warm feedback from senior stakeholders.",
+      "effects": [
+        {
+          "measure": "morale",
+          "delta": 5
+        },
+        {
+          "measure": "quality",
+          "delta": 2
+        }
+      ]
+    },
+    {
+      "id": "budget-review",
+      "day": 23,
+      "title": "Finance asks for 10% cuts",
+      "description": "Finance has asked every project to return 10% of its remaining budget.",
+      "effects": [
+        {
+          "measure": "budget",
+          "delta": -4
+        }
+      ],
+      "decisionId": "budget-decision"
+    },
+    {
+      "id": "hosting-ok",
+      "day": 26,
+      "title": "Hosting migration goes smoothly",
+      "description": "The move to the new hosting platform finishes without incident.",
+      "effects": [
+        {
+          "measure": "quality",
+          "delta": 3
+        },
+        {
+          "measure": "schedule",
+          "delta": 2
+        }
+      ]
+    }
+  ],
+  "decisions": [
+    {
+      "id": "scope-decision",
+      "prompt": "Marketing wants five extra landing pages. How do you respond?",
+      "options": [
+        {
+          "id": "accept-all",
+          "label": "Accept all five pages",
+          "tradeoff": "Keeps marketing happy, but adds a lot of work to an already tight plan.",
+          "effects": [
+            {
+              "measure": "schedule",
+              "delta": -10
+            },
+            {
+              "measure": "budget",
+              "delta": -5
+            },
+            {
+              "measure": "morale",
+              "delta": -4
+            }
+          ]
+        },
+        {
+          "id": "negotiate",
+          "label": "Add two now, three after launch",
+          "tradeoff": "A compromise that limits the damage but needs some negotiation effort.",
+          "effects": [
+            {
+              "measure": "schedule",
+              "delta": -3
+            },
+            {
+              "measure": "morale",
+              "delta": 2
+            }
+          ],
+          "resolves": [
+            "scope-request"
+          ]
+        },
+        {
+          "id": "decline",
+          "label": "Decline: scope is frozen",
+          "tradeoff": "Protects the plan, but creates friction that the team has to absorb.",
+          "effects": [
+            {
+              "measure": "schedule",
+              "delta": 2
+            },
+            {
+              "measure": "quality",
+              "delta": 1
+            },
+            {
+              "measure": "morale",
+              "delta": -2
+            }
+          ],
+          "resolves": [
+            "scope-request"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "capacity-decision",
+      "prompt": "Your lead developer is out for a week. What do you do?",
+      "options": [
+        {
+          "id": "overtime",
+          "label": "Ask the team to work overtime",
+          "tradeoff": "Recovers time, but tired people make mistakes and burn out.",
+          "effects": [
+            {
+              "measure": "schedule",
+              "delta": 3
+            },
+            {
+              "measure": "morale",
+              "delta": -8
+            },
+            {
+              "measure": "quality",
+              "delta": -2
+            }
+          ],
+          "resolves": [
+            "dev-out"
+          ]
+        },
+        {
+          "id": "contractor",
+          "label": "Bring in a contractor",
+          "tradeoff": "Fast and effective, but expensive and needs onboarding.",
+          "effects": [
+            {
+              "measure": "schedule",
+              "delta": 4
+            },
+            {
+              "measure": "budget",
+              "delta": -8
+            },
+            {
+              "measure": "quality",
+              "delta": -1
+            }
+          ],
+          "resolves": [
+            "dev-out"
+          ]
+        },
+        {
+          "id": "reprioritise",
+          "label": "Cut low-priority features",
+          "tradeoff": "Keeps the team sane, but the product gets thinner.",
+          "effects": [
+            {
+              "measure": "schedule",
+              "delta": 2
+            },
+            {
+              "measure": "quality",
+              "delta": -4
+            },
+            {
+              "measure": "morale",
+              "delta": 1
+            }
+          ],
+          "resolves": [
+            "dev-out"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "content-decision",
+      "prompt": "The client content is a week late. How do you proceed?",
+      "options": [
+        {
+          "id": "placeholder",
+          "label": "Build with placeholder content",
+          "tradeoff": "Development continues, but real content may not fit the layouts.",
+          "effects": [
+            {
+              "measure": "schedule",
+              "delta": 3
+            },
+            {
+              "measure": "quality",
+              "delta": -5
+            }
+          ]
+        },
+        {
+          "id": "escalate",
+          "label": "Escalate to the client sponsor",
+          "tradeoff": "Gets the content moving, at the cost of some goodwill and stress.",
+          "effects": [
+            {
+              "measure": "schedule",
+              "delta": 2
+            },
+            {
+              "measure": "morale",
+              "delta": -2
+            }
+          ],
+          "resolves": [
+            "content-late"
+          ]
+        },
+        {
+          "id": "write-ourselves",
+          "label": "Have the team write it",
+          "tradeoff": "Unblocks everything, but it is not the team's strength and takes effort.",
+          "effects": [
+            {
+              "measure": "schedule",
+              "delta": 5
+            },
+            {
+              "measure": "quality",
+              "delta": -2
+            },
+            {
+              "measure": "morale",
+              "delta": -4
+            }
+          ],
+          "resolves": [
+            "content-late"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bug-decision",
+      "prompt": "A critical browser bug was found five days before beta. What now?",
+      "options": [
+        {
+          "id": "fix-now",
+          "label": "Stop and fix it properly",
+          "tradeoff": "The right fix, but it costs time and money right now.",
+          "effects": [
+            {
+              "measure": "schedule",
+              "delta": -4
+            },
+            {
+              "measure": "quality",
+              "delta": 8
+            },
+            {
+              "measure": "budget",
+              "delta": -2
+            }
+          ],
+          "resolves": [
+            "checkout-bug"
+          ]
+        },
+        {
+          "id": "workaround",
+          "label": "Ship a workaround and fix it later",
+          "tradeoff": "Keeps the date, but leaves a known weakness in the product.",
+          "effects": [
+            {
+              "measure": "quality",
+              "delta": 2
+            },
+            {
+              "measure": "schedule",
+              "delta": -1
+            }
+          ]
+        },
+        {
+          "id": "descope",
+          "label": "Remove the affected feature for launch",
+          "tradeoff": "Removes the risk, but disappoints the people who wanted that feature.",
+          "effects": [
+            {
+              "measure": "quality",
+              "delta": 4
+            },
+            {
+              "measure": "morale",
+              "delta": -3
+            }
+          ],
+          "resolves": [
+            "checkout-bug"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "budget-decision",
+      "prompt": "Finance wants 10% of the remaining budget back. What do you cut?",
+      "options": [
+        {
+          "id": "cut-testing",
+          "label": "Cut testing time",
+          "tradeoff": "Easiest saving, but you will find fewer problems before users do.",
+          "effects": [
+            {
+              "measure": "budget",
+              "delta": 6
+            },
+            {
+              "measure": "quality",
+              "delta": -7
+            }
+          ]
+        },
+        {
+          "id": "cut-scope",
+          "label": "Cut some scope",
+          "tradeoff": "Saves money and effort, but the site launches with less.",
+          "effects": [
+            {
+              "measure": "budget",
+              "delta": 5
+            },
+            {
+              "measure": "schedule",
+              "delta": 2
+            },
+            {
+              "measure": "quality",
+              "delta": -2
+            },
+            {
+              "measure": "morale",
+              "delta": -2
+            }
+          ]
+        },
+        {
+          "id": "push-back",
+          "label": "Present data and push back",
+          "tradeoff": "Protects the plan if it works; costs time to prepare and argue.",
+          "effects": [
+            {
+              "measure": "budget",
+              "delta": 2
+            },
+            {
+              "measure": "schedule",
+              "delta": -1
+            },
+            {
+              "measure": "morale",
+              "delta": 2
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
